@@ -1,0 +1,9 @@
+Since the type of files used for a model vary this folder will contain several files for turning any of the common data storage file into a txt file for a machine
+
+File Types that still need to be accounted for:
+- Txt Files - I wanted to add a way to add end of file tags along with beginning model name
+ex. QouteAI: "Qoute" <|endoffile|>
+- json Files 
+- csv Files
+- dat Files
+- parquet Files
