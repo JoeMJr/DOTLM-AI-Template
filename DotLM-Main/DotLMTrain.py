@@ -9,14 +9,17 @@ import DotLM as DotFunc
 import DotLMUtils
 
 # Add file names in parameters for better function usage
-def model_train():
+def model_train(training_file, model_name):
     now = datetime.now()
     print("Start Time =", now)
 
-    file_name = 'quotescsvClean.txt'
+    # The training files should be in txt files
+    # file_name = 'quotescsvClean.txt' # leftover from quote bot
+    file_name = training_file
     string_to_find = '<|endoftext|>'
 
-    model_path = "inspoquotes_model.pth"
+    model_path = model_name + ".pth" #Old hangover from quote bot # "inspoquotes_model.pth"
+    vocab_file = model_name + "Vocab.json"
 
     lossVar = 0
     vocabVar = 0
@@ -44,7 +47,7 @@ def model_train():
         #print("itos:", itos, ",\nitos type:", type(itos))
         print("Encoding and Decoding...")
         encode = lambda s: [stoi[c] for c in s]
-        decode = lambda l: ''.join([itos[i] for i in l])
+        # decode = lambda l: ''.join([itos[i] for i in l])
         print("Setting up the sizes...")
         data = torch.tensor(encode(text), dtype=torch.long)
         block_size = 128
@@ -53,7 +56,8 @@ def model_train():
         model = DotLM(vocab_size, block_size)
         optimizer = torch.optim.AdamW(model.parameters(), lr=2e-4)
         #
-        with open("inspoVocab.json", "w") as f:
+        # OLD: "inspoVocab.json"
+        with open(vocab_file, "w") as f:
             json.dump({"stoi": stoi, "itos": itos}, f)
         #
         # FINALLY FOUND A NICE WAY TO GET A GOOD AMOUNT OF TRAINING STEPS BASED ON THE DATA
