@@ -1,0 +1,9 @@
+I will probably have the front page be the test (probably not)
+I will also try to make a desktop program for the AI
+
+To Do List
+- Add Finetuning
+- Add frontend
+    - Web
+    - Desktop
+- Add TTS Options
