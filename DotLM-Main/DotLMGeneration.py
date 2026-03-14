@@ -26,11 +26,11 @@ def generate():
 
         # print("itos:", itos, ", itos type:", type(itos), "\n49th?", itos["49"]) # fixed the keyerror finally
 
-        encode = lambda s: [stoi[c] for c in s]
+        # encode = lambda s: [stoi[c] for c in s]
         decode = lambda l: ''.join([itos[str(i)] for i in l])
         #
         print("Loading le model.")
-        model.load_state_dict(torch.load(model_path, map_location='cpu'))
+        model.load_state_dict(torch.load(model_path, map_location='cpu', weights_only=True))
 
         print("Quotes (x10):")
         
