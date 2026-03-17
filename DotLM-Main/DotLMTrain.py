@@ -58,7 +58,7 @@ def model_train(training_file, model_name):
         #
         # OLD: "inspoVocab.json"
         with open(vocab_file, "w") as f:
-            json.dump({"stoi": stoi, "itos": itos}, f)
+            json.dump({"stoi": stoi, "itos": itos, "vsize": vocab_size}, f)
         #
         # FINALLY FOUND A NICE WAY TO GET A GOOD AMOUNT OF TRAINING STEPS BASED ON THE DATA
         print("Setting Training Time")
@@ -91,3 +91,7 @@ def model_train(training_file, model_name):
     timmDiff = later - now
 
     print("Time Elapsed: ", timmDiff)
+
+# Fine Tuning - Training after the first round of main training is done
+def fine_tune_model(training_file, model_name):
+    pass
