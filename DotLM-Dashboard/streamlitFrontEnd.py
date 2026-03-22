@@ -1,6 +1,11 @@
 import streamlit as st
 import random
 import time
+import sys
+
+sys.path.insert(0, "..\DotLM-Main")
+
+import DotLMGeneration
 
 st.write("Streamlit loves LLMs! 🤖 [Build your own chat app](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps) in minutes, then make it powerful by adding images, dataframes, or even input widgets to the chat.")
 
@@ -36,13 +41,15 @@ if prompt := st.chat_input("What is up?"):
         full_response = ""
 
         # Change this to DOTLM's generate, to give model responses
-        assistant_response = random.choice(
-            [
-                "Hello there! How can I assist you today?",
-                "Hi, human! Is there anything I can help you with?",
-                "Do you need help?",
-            ]
-        )
+        # I need to find a better way of doing this (getting a models stuff (note to self add it to the utils file))
+        assistant_response = DotLMGeneration.generate(prompt, "", "", "")
+        #= random.choice(
+            #[
+                #"Hello there! How can I assist you today?",
+                #"Hi, human! Is there anything I can help you with?",
+                #"Do you need help?",
+            #]
+        #)
         # Simulate stream of response with milliseconds delay
         for chunk in assistant_response.split():
             full_response += chunk + " "
