@@ -94,4 +94,76 @@ def model_train(training_file, model_name):
 
 # Fine Tuning - Training after the first round of main training is done
 def fine_tune_model(training_file, model_name):
-    pass
+    now = datetime.now()
+    print("Start Time =", now)
+
+    file_name = training_file
+    string_to_find = '<|endoftext|>'
+
+    model_path = model_name + ".pth"
+    vocab_file = model_name + "Vocab.json"
+
+    # Check if both model and vocab files exist
+    if not os.path.exists(model_path) or not os.path.exists(vocab_file):
+        print("Model or vocabulary file not found. Cannot fine-tune.")
+        return
+
+    # Load vocabulary
+    print("Loading vocabulary...")
+    with open(vocab_file, "r") as f:
+        vocab_data = json.load(f)
+        stoi = vocab_data["stoi"]
+        itos = vocab_data["itos"]
+        vocab_size = vocab_data["vsize"]
+
+    # Load the existing model
+    print("Loading existing model...")
+    block_size = 128
+    batch_size = 8
+    model = DotLM(vocab_size, block_size)
+    model.load_state_dict(torch.load(model_path, map_location='cpu', weights_only=True))
+
+    # Set up optimizer
+    optimizer = torch.optim.AdamW(model.parameters(), lr=2e-4)
+
+    # Read and encode training data
+    print("Opening and reading the training data")
+    with open(file_name, "r", encoding="utf-8") as myfile:
+        text = myfile.read()
+    print("Closing the training data")
+
+    print("Encoding training data...")
+    encode = lambda s: [stoi[c] for c in s]
+    data = torch.tensor(encode(text), dtype=torch.long)
+
+    # Calculate training steps (fewer epochs for fine-tuning)
+    print("Setting Training Time")
+    quote_num = DotLMUtils.count_string_in_large_file(file_name, string_to_find)
+    planned_epochs = 10  # Fewer epochs for fine-tuning compared to initial training
+    the_num = (quote_num / batch_size) * planned_epochs
+    step_range = int(round(the_num, -3))
+
+    # Train the model
+    print("Fine-tuning model...")
+    for step in range(step_range):
+        xb, yb = DotFunc.get_batch(data, block_size, batch_size)
+        logits = model(xb)
+        loss = F.cross_entropy(logits.view(-1, vocab_size), yb.view(-1))
+        
+        optimizer.zero_grad(set_to_none=True)
+        loss.backward()
+        optimizer.step()
+        if step % 100 == 0:
+            print(f"Step {step}, loss {loss.item():.4f}")
+    
+    print(f"Step {step}, loss {loss.item():.4f}")
+    
+    # Save the fine-tuned model
+    torch.save(model.state_dict(), model_path)
+    print("Fine-tuned model saved to", model_path)
+
+    later = datetime.now()
+    print("End Time =", later)
+    timmDiff = later - now
+
+    print("Time Elapsed: ", timmDiff)

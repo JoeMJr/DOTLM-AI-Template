@@ -13,4 +13,6 @@ def count_string_in_large_file(filename, search_string):
     
 
 
-
+class AI_Model():
+    def __init__(self, model_name, model_file, vocab_size, vocab_file):
+        pass
